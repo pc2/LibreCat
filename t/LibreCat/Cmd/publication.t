@@ -211,6 +211,34 @@ note("testing adding publication with --no-citation");
     ok !$result->error, 'publication purged';
 }
 
+note("testing adding publication with --no-thumbnail");
+{
+    my $result = test_app(
+        qq|LibreCat::CLI| => [
+            'publication', '--no-thumbnail',
+            'add',         't/records/valid-publication-with-file.yml'
+        ]
+    );
+
+    ok !$result->error, 'ok threw no exception';
+
+    my $output = $result->stdout;
+    ok $output , 'got an output';
+
+    like $output , qr/^added 999999999/, 'added 999999999';
+
+    $result
+        = test_app(qq|LibreCat::CLI| => ['publication', 'get', '999999999']);
+    $output = $result->stdout;
+
+    # like $output, qr/Valid Test Publication/, "got an ouput";
+    # unlike $output, qr/citation/, "got no citation";
+    # $result = test_app(
+    #     qq|LibreCat::CLI| => ['publication', 'purge', '999999999']);
+    #
+    # ok !$result->error, 'publication purged';
+}
+
 done_testing;
 
 sub count_publication {

@@ -29,7 +29,8 @@ options:
     --sort=STR         (sorting results [only in combination with cql-query])
     --total=NUM        (total number of items to list/export)
     --start=NUM        (start list/export at this item)
-    --no-citation      (skip calculating citations when adding records)
+    --no-citation      (skip citation processing)
+    --no-thumbnail     (skip thumbnail processing)
     --version=NUM      (get a specific record version)
     --previous-version (get previous record version)
     --history          (get all record versions)
@@ -68,6 +69,7 @@ sub command_opt_spec {
     my ($class) = @_;
     (
         ['no-citation|nc',   ""],
+        ['no-thumbnail',     ""]
         ['total=i',          ""],
         ['start=i',          ""],
         ['sort=s',           ""],
@@ -315,6 +317,7 @@ sub _add {
     }
 
     my $skip_citation = $self->opts->{'no_citation'} ? 1 : 0;
+    my $skip_thumbnail = $self->opts->{'no_thumbnail'} ? 1 : 0;
 
     my $records = $importer->benchmark->select(
         sub {
@@ -328,6 +331,7 @@ sub _add {
                 'publication',
                 $rec,
                 skip_citation    => $skip_citation,
+                skip_thumbnail   => $skip_thumbnail,
                 validation_error => sub {
                     my $validator = shift;
                     print STDERR join("\n",
