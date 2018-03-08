@@ -69,7 +69,7 @@ sub command_opt_spec {
     my ($class) = @_;
     (
         ['no-citation|nc',   ""],
-        ['no-thumbnail',     ""]
+        ['no-thumbnail',     ""],
         ['total=i',          ""],
         ['start=i',          ""],
         ['sort=s',           ""],
@@ -316,8 +316,8 @@ sub _add {
         $exporter = Catmandu->exporter('YAML', file => $out_file);
     }
 
-    my $skip_citation = $self->opts->{'no_citation'} ? 1 : 0;
-    my $skip_thumbnail = $self->opts->{'no_thumbnail'} ? 1 : 0;
+    my $skip_citation = $self->opts->{'no-citation'} ? 1 : 0;
+    my $skip_thumbnail = $self->opts->{'no-thumbnail'} ? 1 : 0;
 
     my $records = $importer->benchmark->select(
         sub {
