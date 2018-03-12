@@ -211,12 +211,12 @@ note("testing adding publication with --no-citation");
     ok !$result->error, 'publication purged';
 }
 
-note("testing adding publication with --no-thumbnail");
+note("testing adding publication with --with-files");
 {
     my $result = test_app(
         qq|LibreCat::CLI| => [
-            'publication', '--no-thumbnail',
-            'add',         't/records/valid-publication-with-file.yml'
+            'publication', '--with-files',
+            'add', 't/records/valid-publication.yml'
         ]
     );
 

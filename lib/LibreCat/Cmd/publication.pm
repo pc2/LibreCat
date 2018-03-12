@@ -30,7 +30,7 @@ options:
     --total=NUM        (total number of items to list/export)
     --start=NUM        (start list/export at this item)
     --no-citation      (skip citation processing)
-    --no-thumbnail     (skip thumbnail processing)
+    --with-files       (do file processing)
     --version=NUM      (get a specific record version)
     --previous-version (get previous record version)
     --history          (get all record versions)
@@ -69,7 +69,7 @@ sub command_opt_spec {
     my ($class) = @_;
     (
         ['no-citation|nc',   ""],
-        ['no-thumbnail',     ""],
+        ['with-files',     ""],
         ['total=i',          ""],
         ['start=i',          ""],
         ['sort=s',           ""],
@@ -317,7 +317,7 @@ sub _add {
     }
 
     my $skip_citation = $self->opts->{'no-citation'} ? 1 : 0;
-    my $skip_thumbnail = $self->opts->{'no-thumbnail'} ? 1 : 0;
+    my $with_files = $self->opts->{'with-files'} ? 1 : 0;
 
     my $records = $importer->benchmark->select(
         sub {
@@ -331,7 +331,7 @@ sub _add {
                 'publication',
                 $rec,
                 skip_citation    => $skip_citation,
-                skip_thumbnail   => $skip_thumbnail,
+                with_files   => $with_files,
                 validation_error => sub {
                     my $validator = shift;
                     print STDERR join("\n",

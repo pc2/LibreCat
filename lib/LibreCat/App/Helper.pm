@@ -14,8 +14,6 @@ use JSON::MaybeXS qw(encode_json);
 use LibreCat;
 use LibreCat::I18N;
 use LibreCat::JobQueue;
-use LibreCat::App::Catalogue::Controller::File;
-use LibreCat::App::Catalogue::Controller::Material;
 use Log::Log4perl ();
 use NetAddr::IP::Lite;
 use URI::Escape qw(uri_escape_utf8);
@@ -310,10 +308,10 @@ sub update_record {
 sub store_record {
     my ($self, $bag, $rec, %opts) = @_;
 
-    # don't know where to put it, should find better place to handle this
-    # especially the async stuff
+    require LibreCat::App::Catalogue::Controller::File;
+    require LibreCat::App::Catalogue::Controller::Material;
     if ($bag eq 'publication') {
-        LibreCat::App::Catalogue::Controller::File::handle_file($rec) unless $opts{skip_thumbnail};
+        LibreCat::App::Catalogue::Controller::File::handle_file($rec) if $opts{with_files};
 
         if ($rec->{related_material}) {
             LibreCat::App::Catalogue::Controller::Material::update_related_material(
