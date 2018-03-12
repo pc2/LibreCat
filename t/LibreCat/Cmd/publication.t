@@ -183,11 +183,11 @@ note("testing deleting a publication");
     like $output , qr/^purged 999999999/, 'purged 999999999';
 }
 
-note("testing adding publication with --no-citation");
+note("testing adding publication --with_citations");
 {
     my $result = test_app(
         qq|LibreCat::CLI| => [
-            'publication', '--no-citation',
+            'publication', '--with_citations',
             'add',         't/records/valid-publication-no-citation.yml'
         ]
     );

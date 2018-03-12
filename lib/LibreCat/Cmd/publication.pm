@@ -29,7 +29,7 @@ options:
     --sort=STR         (sorting results [only in combination with cql-query])
     --total=NUM        (total number of items to list/export)
     --start=NUM        (start list/export at this item)
-    --no-citation      (skip citation processing)
+    --with-citations   (do citation processing)
     --with-files       (do file processing)
     --version=NUM      (get a specific record version)
     --previous-version (get previous record version)
@@ -68,8 +68,8 @@ EOF
 sub command_opt_spec {
     my ($class) = @_;
     (
-        ['no-citation|nc',   ""],
-        ['with-files',     ""],
+        ['with-citations',   ""],
+        ['with-files',       ""],
         ['total=i',          ""],
         ['start=i',          ""],
         ['sort=s',           ""],
@@ -316,7 +316,7 @@ sub _add {
         $exporter = Catmandu->exporter('YAML', file => $out_file);
     }
 
-    my $skip_citation = $self->opts->{'no-citation'} ? 1 : 0;
+    my $with_citations = $self->opts->{'with-citations'} ? 1 : 0;
     my $with_files = $self->opts->{'with-files'} ? 1 : 0;
 
     my $records = $importer->benchmark->select(
@@ -330,7 +330,7 @@ sub _add {
             $helper->store_record(
                 'publication',
                 $rec,
-                skip_citation    => $skip_citation,
+                with_citations    => $with_citations,
                 with_files   => $with_files,
                 validation_error => sub {
                     my $validator = shift;

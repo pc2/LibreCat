@@ -333,9 +333,9 @@ sub store_record {
     my $fix = $fixes->{$bag} //= $self->create_fixer("update_$bag.fix");
     $fix->fix($rec);
 
-    state $cite_fix = Catmandu::Fix->new(fixes => ["add_citation()"]);
-    if ($bag eq 'publication') {
-        $cite_fix->fix($rec) unless $opts{skip_citation};
+    if ($bag eq 'publication' && $opts{with_citations}) {
+        state $cite_fix = Catmandu::Fix->new(fixes => ["add_citation()"]);
+        $cite_fix->fix($rec);
     }
 
     # clean all the fields that are not part of the JSON schema
