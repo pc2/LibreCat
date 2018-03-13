@@ -183,11 +183,11 @@ note("testing deleting a publication");
     like $output , qr/^purged 999999999/, 'purged 999999999';
 }
 
-note("testing adding publication --with_citations");
+note("testing adding publication --with-citations");
 {
     my $result = test_app(
         qq|LibreCat::CLI| => [
-            'publication', '--with_citations',
+            'publication', '--with-citations',
             'add',         't/records/valid-publication-no-citation.yml'
         ]
     );
@@ -204,7 +204,7 @@ note("testing adding publication --with_citations");
     $output = $result->stdout;
 
     like $output, qr/Valid Test Publication/, "got an ouput";
-    unlike $output, qr/citation/, "got no citation";
+
     $result = test_app(
         qq|LibreCat::CLI| => ['publication', 'purge', '999999999']);
 
@@ -230,13 +230,6 @@ note("testing adding publication with --with-files");
     $result
         = test_app(qq|LibreCat::CLI| => ['publication', 'get', '999999999']);
     $output = $result->stdout;
-
-    # like $output, qr/Valid Test Publication/, "got an ouput";
-    # unlike $output, qr/citation/, "got no citation";
-    # $result = test_app(
-    #     qq|LibreCat::CLI| => ['publication', 'purge', '999999999']);
-    #
-    # ok !$result->error, 'publication purged';
 }
 
 done_testing;
