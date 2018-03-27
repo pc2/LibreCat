@@ -7,7 +7,7 @@ use LibreCat::CLI;
 use Test::More;
 use Test::Exception;
 use App::Cmd::Tester;
-use Cpanel::JSON::XS;
+use Data::Dumper;
 
 my $pkg;
 
@@ -30,6 +30,16 @@ subtest 'initial cmd' => sub {
     $result = test_app(qq|LibreCat::CLI| => ['department']);
     ok $result->error, 'non-valid command: threw an exception';
     like $result->error, qr/Error.*?should be one of/, 'print valid commands';
+
+    $result = test_app(qq|LibreCat::CLI| => ['department', 'nonsense-command']);
+    ok $result->error, 'non-valid command: threw an exception';
+    like $result->error, qr/Error.*?should be one of/, 'print valid commands';
+};
+
+subtest 'help' => sub {
+    my $result = test_app(qq|LibreCat::CLI| => ['department', '-h']);
+    ok $result->error, 'help cmd: throw an exception';
+    like $result->stdout, qr/print this usage screen/, 'print help';
 };
 
 subtest 'empty list' => sub {
@@ -60,6 +70,19 @@ subtest 'validate' => sub {
 
 subtest 'add invalid' => sub {
     my $result = test_app(qq|LibreCat::CLI| =>
+            ['department', 'add']);
+    ok $result->error, 'missing file in add';
+
+    like $result->error, qr/usage.*add/, "need file";
+
+    $result = test_app(qq|LibreCat::CLI| =>
+            ['department', 'add', 't/records/fjlasdjflsa.yml']);
+
+    ok $result->error, 'nonexistent file in add';
+
+    like $result->error, qr/usage.*add/, "need file";
+
+    $result = test_app(qq|LibreCat::CLI| =>
             ['department', 'add', 't/records/invalid-department.yml']);
     ok $result->error, 'add invalid department: threw an exception';
 };
@@ -100,6 +123,14 @@ subtest 'get' => sub {
 
     is $record->{_id},  999000999,      'got really a 999000999 record';
     is $record->{name}, 'Test faculty', 'got a valid department';
+
+    $result = test_app(qq|LibreCat::CLI| => ['department', 'get', 't/records/department_ids.txt']);
+
+    ok !$result->error, 'ok threw no exception';
+
+    my $output = $result->stdout;
+
+    ok $output , 'got an output';
 };
 
 subtest 'list' => sub {
@@ -115,20 +146,25 @@ subtest 'list' => sub {
     ok $count == 1, 'count for list departments';
 
 
-    $result = test_app(qq|LibreCat::CLI| => ['department', 'list', '--query "name: Test"']);
-
-    ok !$result->error, 'list with query: threw no exception';
-
-    $output = $result->stdout;
-    ok $output , 'list departments with query: got an output';
-
-    $count = count_department($output);
-
-    ok $count == 1, 'count for list departments with query';
+    # $result = test_app(qq|LibreCat::CLI| => ['department', 'list', '--query "name: Test"']);
+    #
+    # ok !$result->error, 'list with query: threw no exception';
+    #
+    # $output = $result->stdout;
+    # ok $output , 'list departments with query: got an output';
+    #
+    # $count = count_department($output);
+    #
+    # ok $count == 1, 'count for list departments with query';
 };
 
 subtest 'tree' => sub {
     my $result = test_app(qq|LibreCat::CLI| => ['department', 'tree']);
+
+    ok !$result->error, "threw no exception";
+    like $result->output, qr/tree:/, "tree ouput";
+
+    $result = test_app(qq|LibreCat::CLI| => ['department', 'tree', ]);
 
     ok !$result->error, "threw no exception";
     like $result->output, qr/tree:/, "tree ouput";
@@ -140,13 +176,13 @@ subtest 'export' => sub {
     ok !$result->error, "threw no exception";
     like $result->output, qr/_id:/, "export output";
 
-    $result = test_app(qq|LibreCat::CLI| => ['department', 'export', '--sort name']);
-    ok $result->error, "threw an exception";
-    like $result->stderr, qr/warning: sort only active/, "throws warning for sort without query parameter";
-
-    $result = test_app(qq|LibreCat::CLI| => ['department', 'export', '--sort name', '--query "name: Test"']);
-    ok !$result->error, "threw no exception";
-    like $result->output, qr/name: Test faculty/, "export by query";
+    # $result = test_app(qq|LibreCat::CLI| => ['department', 'export', '--sort name']);
+    # ok $result->error, "threw an exception";
+    # like $result->stderr, qr/warning: sort only active/, "throws warning for sort without query parameter";
+    #
+    # $result = test_app(qq|LibreCat::CLI| => ['department', 'export', '--sort name', '--query "name: Test"']);
+    # ok !$result->error, "threw no exception";
+    # like $result->output, qr/name: Test faculty/, "export by query";
 };
 
 subtest 'delete' => sub {
@@ -168,11 +204,11 @@ subtest 'delete' => sub {
     $output = $result->stdout;
     ok length($output) == 0, 'got no result';
 
-    $result = test_app(
-        qq|LibreCat::CLI| => ['department', 'delete', '12345678909876543']);
-
-    ok $result->error, 'throw exception: delete non-existent ID';
-    like $result->stderr, qr/^ERROR: delete.*?failed$/, 'error message: delete non-existent ID';
+    # $result = test_app(
+    #     qq|LibreCat::CLI| => ['department', 'delete', '12345678909876543']);
+    #
+    # ok $result->error, 'throw exception: delete non-existent ID';
+    # like $result->stderr, qr/^ERROR: delete.*?failed$/, 'error message: delete non-existent ID';
 };
 
 done_testing;
