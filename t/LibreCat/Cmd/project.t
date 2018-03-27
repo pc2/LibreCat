@@ -1,14 +1,11 @@
 use Catmandu::Sane;
 use Path::Tiny;
 use LibreCat load => (layer_paths => [qw(t/layer)]);
-
 use Catmandu;
-
 use LibreCat::CLI;
 use Test::More;
 use Test::Exception;
 use App::Cmd::Tester;
-use Cpanel::JSON::XS;
 
 my $pkg;
 
@@ -26,6 +23,10 @@ Catmandu->store('search')->bag('project')->delete_all;
 subtest 'missing cmd' => sub {
     my $result = test_app(qq|LibreCat::CLI| => ['project']);
     ok $result->error, 'ok threw an exception';
+
+    $result = test_app(qq|LibreCat::CLI| => ['project', 'nonsense-command']);
+    ok $result->error, 'non-valid command: threw an exception';
+    like $result->error, qr/Error.*?should be one of/, 'print valid commands';
 };
 
 subtest 'list' => sub {
