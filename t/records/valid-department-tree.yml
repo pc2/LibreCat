@@ -1,0 +1,16 @@
+---
+tree:
+  GUK:
+    name: Global Campus Korea
+    display: Global Campus Korea (GUK)
+    tree:
+      KR01:
+        name: Department of Environmental Technology, Food Technology and Molecular Biotechnology
+        display: Department of Environmental Technology, Food Technology and Molecular Biotechnology (KR01)
+      KR71:
+        name: Admissions and enrollment office
+        display: Admissions and enrollment office (KR71)
+      KR73:
+        name: Recruitment office
+        display: Recruitment office (KR73)
+...
