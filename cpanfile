@@ -15,6 +15,7 @@ on 'test' => sub {
     requires 'Test::Pod';
     requires 'Test::TCP';
     requires 'Test::WWW::Mechanize::Dancer';
+    requires 'Test::Class::Moose';
 };
 
 requires 'Business::ISBN', 0;
